@@ -18,22 +18,34 @@ export function ProgressBar({ submittedDepts }: Props) {
   const pct = (done / total) * 100
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl p-4">
+    <div className="gf-card px-6 py-4">
       <div className="flex items-center justify-between mb-3">
-        <span className="text-sm font-medium text-gray-700">Session progress</span>
-        <span className="text-sm font-medium text-[#1D9E75]">{done} of {total} departments submitted</span>
+        <span className="text-sm font-semibold text-[#0A0A0A]">Session progress</span>
+        <span className="text-xs font-semibold text-[#BF9A36] bg-[#FBDB79]/40 px-2.5 py-1 rounded-full">
+          {done} of {total} submitted
+        </span>
       </div>
-      <div className="w-full bg-gray-100 rounded-full h-2 mb-3">
+      {/* Gold progress bar */}
+      <div className="w-full bg-gray-100 rounded-full h-1.5 mb-4">
         <div
-          className="bg-[#1D9E75] h-2 rounded-full transition-all duration-500"
-          style={{ width: `${pct}%` }}
+          className="h-1.5 rounded-full transition-all duration-700"
+          style={{
+            width: `${pct}%`,
+            background: 'linear-gradient(90deg, #915825, #F8BB1A)',
+          }}
         />
       </div>
-      <div className="flex gap-4">
+      <div className="flex gap-5">
         {(['hr', 'delivery', 'sales'] as Department[]).map(dept => (
           <div key={dept} className="flex items-center gap-1.5">
-            <div className={`w-2 h-2 rounded-full ${submittedDepts.includes(dept) ? 'bg-[#1D9E75]' : 'bg-gray-300'}`} />
-            <span className="text-xs text-gray-600">{DEPT_LABELS[dept]}</span>
+            <div className={`w-2.5 h-2.5 rounded-full border-2 transition-colors ${
+              submittedDepts.includes(dept)
+                ? 'bg-[#F8BB1A] border-[#BF9A36]'
+                : 'bg-transparent border-gray-300'
+            }`} />
+            <span className={`text-xs font-medium ${submittedDepts.includes(dept) ? 'text-[#915825]' : 'text-gray-400'}`}>
+              {DEPT_LABELS[dept]}
+            </span>
           </div>
         ))}
       </div>

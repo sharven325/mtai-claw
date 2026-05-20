@@ -25,7 +25,7 @@ interface FormCtx {
 
 const FormContext = createContext<FormCtx | null>(null)
 
-export function useFormField(sessionId: string, department: Department, section: string, key: string) {
+export function useFormField(_sessionId: string, _department: Department, section: string, key: string) {
   const ctx = useContext(FormContext)
   if (!ctx) throw new Error('useFormField must be used inside DeptForm')
   const fieldId = `${section}__${key}`
@@ -132,47 +132,60 @@ export function DeptForm({ sessionId, department, initialResponses, isSubmitted,
   return (
     <FormContext.Provider value={{ sessionId, department, values, setField, saving }}>
       <div className="space-y-3">
-        <div className="flex items-center justify-between py-2">
+
+        {/* Status bar — mimics Google Forms' top description card */}
+        <div className="gf-card gf-card-active px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <span className="text-sm text-gray-500">{completedCount} of {SECTION_META.length} sections complete</span>
+            <div className="text-sm font-semibold text-[#0A0A0A]">
+              {completedCount} <span className="text-gray-400 font-normal">of {SECTION_META.length} sections filled</span>
+            </div>
             {saving && (
-              <span className="flex items-center gap-1 text-xs text-gray-400">
-                <Loader2 size={12} className="animate-spin" /> Saving
+              <span className="flex items-center gap-1 text-xs text-[#BF9A36]">
+                <Loader2 size={11} className="animate-spin" /> Saving…
               </span>
             )}
           </div>
           {submitted && (
-            <span className="flex items-center gap-1.5 text-sm text-[#1D9E75] font-medium">
-              <CheckCircle2 size={16} /> Submitted
+            <span className="flex items-center gap-1.5 text-xs font-semibold text-[#BF9A36] bg-[#FBDB79]/30 px-2.5 py-1 rounded-full">
+              <CheckCircle2 size={13} /> Submitted
             </span>
           )}
         </div>
 
+        {/* Section cards — Google Forms question card style */}
         {SECTION_META.map(meta => {
           const complete = isComplete(meta)
           const isOpen = openSection === meta.id
           const SectionComponent = meta.component
           return (
-            <div key={meta.id} className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+            <div
+              key={meta.id}
+              className={`gf-card transition-all ${isOpen ? 'border-l-4 border-l-[#F8BB1A]' : 'border-l-4 border-l-transparent'}`}
+            >
+              {/* Section header — clickable toggle */}
               <button
                 type="button"
                 onClick={() => setOpenSection(isOpen ? '' : meta.id)}
-                className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-gray-50 transition-colors"
+                className="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-[#FBDB79]/10 transition-colors"
               >
                 <div className="flex items-center gap-3">
                   {complete
-                    ? <CheckCircle2 size={16} className="text-[#1D9E75] shrink-0" />
-                    : <Circle size={16} className="text-gray-300 shrink-0" />
+                    ? <CheckCircle2 size={17} className="text-[#BF9A36] shrink-0" />
+                    : <Circle size={17} className="text-gray-300 shrink-0" />
                   }
-                  <span className="text-sm font-medium text-gray-800">{meta.title}</span>
+                  <span className={`text-sm font-semibold ${isOpen ? 'text-[#0A0A0A]' : 'text-gray-600'}`}>
+                    {meta.title}
+                  </span>
                 </div>
                 <ChevronDown
                   size={16}
-                  className={`text-gray-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+                  className={`text-[#BF9A36] transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
                 />
               </button>
+
+              {/* Section body */}
               {isOpen && (
-                <div className="px-5 pb-5 pt-1 border-t border-gray-100">
+                <div className="px-6 pb-7 pt-2 border-t border-[#FBDB79]/40">
                   <SectionComponent sessionId={sessionId} department={department} />
                 </div>
               )}
@@ -180,22 +193,25 @@ export function DeptForm({ sessionId, department, initialResponses, isSubmitted,
           )
         })}
 
+        {/* Submit / confirmation */}
         {!submitted ? (
-          <div className="pt-2">
+          <div className="gf-card px-6 py-5 flex items-center justify-between">
+            <p className="text-xs text-gray-400">Auto-saved · submit when this department is complete</p>
             <button
               onClick={handleSubmit}
               disabled={submitting}
-              className="w-full bg-[#1D9E75] text-white rounded-xl py-3 text-sm font-medium hover:bg-[#178A65] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="btn-gold ml-4 shrink-0"
             >
-              {submitting ? 'Submitting...' : `Submit ${deptLabel} requirements`}
+              {submitting ? 'Submitting…' : `Submit ${deptLabel}`}
             </button>
-            <p className="text-xs text-gray-400 text-center mt-2">All sections are auto-saved. Submit when ready to lock in this department.</p>
           </div>
         ) : (
-          <div className="bg-[#1D9E75]/10 border border-[#1D9E75]/20 rounded-xl p-4 text-center">
-            <CheckCircle2 size={24} className="text-[#1D9E75] mx-auto mb-2" />
-            <p className="text-sm font-medium text-[#1D9E75]">{deptLabel} requirements submitted</p>
-            <p className="text-xs text-gray-500 mt-1">Use the export button to download the CLAUDE.md draft.</p>
+          <div className="gf-card border-l-4 border-l-[#F8BB1A] px-6 py-5 flex items-center gap-4 bg-[#FBDB79]/10">
+            <CheckCircle2 size={28} className="text-[#BF9A36] shrink-0" />
+            <div>
+              <p className="text-sm font-bold text-[#0A0A0A]">{deptLabel} requirements submitted</p>
+              <p className="text-xs text-gray-500 mt-0.5">Use the Export button to download the CLAUDE.md draft.</p>
+            </div>
           </div>
         )}
       </div>

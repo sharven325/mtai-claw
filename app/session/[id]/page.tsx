@@ -3,11 +3,12 @@
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
-import { Download, LogOut } from 'lucide-react'
+import { Download, LayoutDashboard } from 'lucide-react'
 import { type Department, type Response, type Submission } from '@/lib/supabase'
 import { DeptForm } from '@/components/DeptForm'
 import { ProgressBar } from '@/components/ProgressBar'
 import { ExportModal } from '@/components/ExportModal'
+import { ClawLogo } from '@/components/ClawLogo'
 
 const DEPT_TABS: { id: Department; label: string }[] = [
   { id: 'hr', label: 'HR' },
@@ -105,51 +106,56 @@ export default function SessionPage() {
 
   if (loading || status === 'loading') {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-sm text-gray-500">Loading session...</div>
+      <div className="min-h-screen bg-[#F6F2EB] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <ClawLogo size={48} />
+          <p className="text-sm text-gray-500 font-medium">Loading session…</p>
+        </div>
       </div>
     )
   }
 
   if (isNew || showNewSession) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 w-full max-w-md">
-          <div className="flex items-center gap-2 mb-6">
-            <div className="w-7 h-7 bg-[#1D9E75] rounded-lg" />
-            <span className="font-semibold text-gray-900">MTAI CLAW</span>
+      <div className="min-h-screen bg-[#F6F2EB] flex flex-col items-center justify-center p-4">
+        <div className="w-full max-w-lg">
+          {/* Branded header card */}
+          <div className="gf-card border-t-8 border-t-[#F8BB1A] rounded-b-none">
+            <div className="bg-[#0A0A0A] px-8 py-6 flex items-center gap-4">
+              <ClawLogo size={48} />
+              <div>
+                <p className="text-white font-bold text-xl tracking-wide">MTAI CLAW</p>
+                <p className="text-[#FBDB79] text-xs font-medium tracking-widest uppercase">Requirements Portal</p>
+              </div>
+            </div>
+            <div className="px-8 py-6">
+              <h1 className="text-xl font-bold text-[#0A0A0A]">New session</h1>
+              <p className="text-sm text-gray-500 mt-1">The session URL can be shared so multiple facilitators can fill from any device.</p>
+            </div>
           </div>
-          <h1 className="text-xl font-semibold text-gray-900 mb-1">New requirements session</h1>
-          <p className="text-sm text-gray-500 mb-6">Create a session for this HOD briefing. The session link can be shared for multi-device access.</p>
 
-          <div className="space-y-4">
+          {/* Fields card */}
+          <div className="gf-card rounded-t-none border-t border-gray-100 px-8 py-7 space-y-7">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Session label</label>
-              <input
-                type="text"
-                value={newLabel}
-                onChange={e => setNewLabel(e.target.value)}
-                className="form-input"
-                placeholder="e.g. Week 1 HOD Briefing — May 2025"
-              />
+              <label className="block text-sm font-semibold text-[#0A0A0A] mb-3">
+                Session label <span className="text-[#915825]">*</span>
+              </label>
+              <input type="text" value={newLabel} onChange={e => setNewLabel(e.target.value)}
+                className="form-input" placeholder="e.g. Week 1 HOD Briefing — May 2025" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Facilitator name</label>
-              <input
-                type="text"
-                value={newFacilitator}
-                onChange={e => setNewFacilitator(e.target.value)}
-                className="form-input"
-                placeholder="Your full name"
-              />
+              <label className="block text-sm font-semibold text-[#0A0A0A] mb-3">
+                Facilitator name <span className="text-[#915825]">*</span>
+              </label>
+              <input type="text" value={newFacilitator} onChange={e => setNewFacilitator(e.target.value)}
+                className="form-input" placeholder="Your full name" />
             </div>
-            <button
-              onClick={createSession}
-              disabled={creating || !newLabel.trim() || !newFacilitator.trim()}
-              className="w-full bg-[#1D9E75] text-white rounded-lg py-2.5 text-sm font-medium hover:bg-[#178A65] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              {creating ? 'Creating...' : 'Create session'}
-            </button>
+            <div className="flex justify-end pt-1">
+              <button onClick={createSession} disabled={creating || !newLabel.trim() || !newFacilitator.trim()}
+                className="btn-gold">
+                {creating ? 'Creating…' : 'Create session'}
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -157,58 +163,56 @@ export default function SessionPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Top nav */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
-        <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+    <div className="min-h-screen bg-[#F6F2EB]">
+      {/* Top nav — Jet Black with gold logo */}
+      <header className="bg-[#0A0A0A] sticky top-0 z-40 shadow-md">
+        <div className="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-7 h-7 bg-[#1D9E75] rounded-lg shrink-0" />
+            <ClawLogo size={34} />
             <div>
-              <p className="text-sm font-semibold text-gray-900 leading-tight">{sessionData?.session_label}</p>
-              <p className="text-xs text-gray-400">{sessionData?.facilitator_name} · {id?.slice(0, 8)}</p>
+              <p className="text-white font-semibold text-sm leading-tight">{sessionData?.session_label}</p>
+              <p className="text-[#BF9A36] text-xs">{sessionData?.facilitator_name} · <span className="font-mono">{id?.slice(0, 8)}</span></p>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <button
-              onClick={() => setShowExport(true)}
-              className="flex items-center gap-1.5 text-sm text-gray-600 hover:text-gray-900 border border-gray-200 rounded-lg px-3 py-1.5 transition-colors"
-            >
-              <Download size={14} />
+            <button onClick={() => setShowExport(true)}
+              className="flex items-center gap-1.5 text-xs font-semibold text-[#F8BB1A] border border-[#BF9A36] rounded-lg px-3 py-1.5 hover:bg-[#BF9A36]/20 transition-colors">
+              <Download size={13} />
               <span className="hidden sm:inline">Export</span>
             </button>
-            <button
-              onClick={() => router.push('/admin')}
-              className="flex items-center gap-1.5 text-sm text-gray-600 hover:text-gray-900 border border-gray-200 rounded-lg px-3 py-1.5 transition-colors"
-            >
-              <LogOut size={14} />
+            <button onClick={() => router.push('/admin')}
+              className="flex items-center gap-1.5 text-xs font-semibold text-gray-400 border border-gray-700 rounded-lg px-3 py-1.5 hover:border-gray-500 transition-colors">
+              <LayoutDashboard size={13} />
               <span className="hidden sm:inline">Admin</span>
             </button>
           </div>
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-4 py-6 space-y-5">
+      <main className="max-w-3xl mx-auto px-4 py-6 space-y-4">
         <ProgressBar submittedDepts={submittedDepts} />
 
-        {/* Department tabs */}
-        <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
-          <div className="flex border-b border-gray-200">
+        {/* Department tabs — Google Forms pill style */}
+        <div className="gf-card">
+          <div className="flex">
             {DEPT_TABS.map(tab => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex-1 py-3 text-sm font-medium transition-colors relative ${
+                className={`flex-1 py-3.5 text-sm font-semibold transition-all relative ${
                   activeTab === tab.id
-                    ? 'text-[#1D9E75]'
-                    : 'text-gray-500 hover:text-gray-700'
+                    ? 'text-[#0A0A0A]'
+                    : 'text-gray-400 hover:text-gray-600'
                 }`}
               >
-                {tab.label}
-                {submittedDepts.includes(tab.id) && (
-                  <span className="ml-1.5 w-1.5 h-1.5 bg-[#1D9E75] rounded-full inline-block align-middle" />
-                )}
+                <span className="flex items-center justify-center gap-1.5">
+                  {tab.label}
+                  {submittedDepts.includes(tab.id) && (
+                    <span className="w-1.5 h-1.5 bg-[#F8BB1A] rounded-full" />
+                  )}
+                </span>
                 {activeTab === tab.id && (
-                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#1D9E75]" />
+                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#F8BB1A]" />
                 )}
               </button>
             ))}

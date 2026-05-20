@@ -9,8 +9,18 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        teal: { DEFAULT: '#1D9E75', 50: '#E8F7F2', 100: '#C5EBD9', 500: '#1D9E75', 600: '#178A65' },
-        danger: '#E24B4A',
+        gold: {
+          DEFAULT: '#F8BB1A',
+          light:   '#FBDB79',
+          mid:     '#BF9A36',
+          dark:    '#915825',
+        },
+        ink: '#0A0A0A',
+        parchment: '#F6F2EB',
+        danger: '#915825',
+      },
+      fontFamily: {
+        sans: ['Montserrat', 'sans-serif'],
       },
       keyframes: {
         'accordion-down': { from: { height: '0' }, to: { height: 'var(--radix-accordion-content-height)' } },

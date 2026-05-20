@@ -1,9 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import { signIn } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Suspense } from 'react'
+import { ClawLogo } from '@/components/ClawLogo'
 
 function LoginForm() {
   const [password, setPassword] = useState('')
@@ -34,39 +34,57 @@ function LoginForm() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 w-full max-w-sm">
-        <div className="mb-8">
-          <div className="flex items-center gap-2 mb-1">
-            <div className="w-8 h-8 bg-[#1D9E75] rounded-lg" />
-            <span className="font-semibold text-gray-900 text-lg">MTAI CLAW</span>
+    <div className="min-h-screen bg-[#F6F2EB] flex flex-col items-center justify-center p-4">
+      {/* Google-Forms-style login card with branded header */}
+      <div className="w-full max-w-md">
+        {/* Header card */}
+        <div className="gf-card border-t-8 border-t-[#F8BB1A] mb-0 rounded-b-none">
+          <div className="px-8 pt-8 pb-6">
+            {/* Logo */}
+            <div className="flex items-center gap-3 mb-5">
+              <ClawLogo size={44} />
+              <div>
+                <p className="font-bold text-[#0A0A0A] text-xl leading-tight tracking-wide">MTAI</p>
+                <p className="text-[#BF9A36] font-semibold text-xs tracking-[0.2em] uppercase leading-tight">— CLAW —</p>
+              </div>
+            </div>
+            <h1 className="text-2xl font-bold text-[#0A0A0A]">Requirements Portal</h1>
+            <p className="text-sm text-gray-500 mt-1">CLAW AI Agent Deployment · M Telecommunications</p>
           </div>
-          <p className="text-gray-500 text-sm mt-2">Requirements gathering portal</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Facilitator password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D9E75] focus:border-transparent"
-              placeholder="Enter password"
-              required
-            />
-          </div>
+        {/* Form card */}
+        <div className="gf-card rounded-t-none border-t border-gray-200 px-8 py-7">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label className="block text-sm font-medium text-[#0A0A0A] mb-3">
+                Facilitator password <span className="text-[#915825]">*</span>
+              </label>
+              <input
+                type="password"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                className="form-input"
+                placeholder="Enter your password"
+                required
+              />
+              <div className="h-px bg-gray-200 mt-0" />
+            </div>
 
-          {error && <p className="text-[#E24B4A] text-sm">{error}</p>}
+            {error && (
+              <p className="text-[#915825] text-sm font-medium flex items-center gap-1.5">
+                <span className="text-base">⚠</span> {error}
+              </p>
+            )}
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-[#1D9E75] text-white rounded-lg px-4 py-2.5 text-sm font-medium hover:bg-[#178A65] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            {loading ? 'Signing in...' : 'Sign in'}
-          </button>
-        </form>
+            <div className="flex items-center justify-between pt-1">
+              <span className="text-xs text-gray-400">Facilitator access only</span>
+              <button type="submit" disabled={loading} className="btn-gold">
+                {loading ? 'Signing in...' : 'Sign in'}
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   )
